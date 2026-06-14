@@ -1,0 +1,515 @@
+/* ============================================================
+   UM GOLO · UM KM — Desafio Mundial 2026
+   Estética: técnica/editorial, escura, com um acento elétrico.
+   Inspiração: terminal-industries · siena.film · apple ·
+               exoape · collabcapitolium
+   ============================================================ */
+
+:root {
+  --bg: #0a0a0b;
+  --bg-2: #0d0e10;
+  --surface: rgba(255, 255, 255, 0.022);
+  --surface-2: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-soft: rgba(255, 255, 255, 0.06);
+  --text: #f4f4f2;
+  --muted: #8b8e95;
+  --muted-2: #5a5d63;
+  --accent: #ccff00;
+  --accent-soft: rgba(204, 255, 0, 0.14);
+  --accent-line: rgba(204, 255, 0, 0.32);
+
+  --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --maxw: 1120px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  overflow-x: hidden;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+b {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ---------- Fundo em camadas ---------- */
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: -2px;
+  background-image: linear-gradient(var(--border-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(
+    120% 90% at 50% 0%,
+    #000 0%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 0%, transparent 72%);
+  opacity: 0.5;
+}
+
+.bg-glow {
+  position: absolute;
+  top: -28vh;
+  left: 50%;
+  width: 90vw;
+  max-width: 1100px;
+  height: 80vh;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    closest-side,
+    var(--accent-soft),
+    transparent 70%
+  );
+  opacity: 0.55;
+  filter: blur(8px);
+}
+
+.bg-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Topbar ---------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px clamp(20px, 5vw, 56px);
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0.72), transparent);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.brand {
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  color: var(--text);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent-line);
+  animation: pulse 2.4s var(--ease) infinite;
+}
+
+.live.is-off .live-dot {
+  background: var(--muted-2);
+  animation: none;
+  box-shadow: none;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent-line);
+  }
+  70% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ---------- Layout ---------- */
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(48px, 9vw, 116px) clamp(20px, 5vw, 56px) 64px;
+}
+
+/* ---------- Hero ---------- */
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  margin-bottom: 26px;
+}
+
+.display {
+  font-weight: 500;
+  font-size: clamp(2.1rem, 6.4vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: 16ch;
+}
+
+.display .hl {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Contador gigante */
+.counter {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(16px, 3vw, 32px);
+  margin: clamp(40px, 7vw, 76px) 0 22px;
+  flex-wrap: wrap;
+}
+
+.counter-num {
+  font-size: clamp(5.5rem, 24vw, 17rem);
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, #ffffff 8%, #b9bcc0 105%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.counter-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: clamp(10px, 2.4vw, 30px);
+}
+
+.counter-unit {
+  font-size: clamp(15px, 2vw, 19px);
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  padding-left: 14px;
+  border-left: 2px solid var(--accent-line);
+}
+
+.counter-sub {
+  font-size: 11.5px;
+  letter-spacing: 0.13em;
+  color: var(--muted);
+  padding-left: 14px;
+}
+
+.since {
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.since .tick {
+  color: var(--accent);
+}
+
+.since b {
+  color: var(--text);
+  margin-left: 4px;
+}
+
+/* ---------- Atletas ---------- */
+
+.runners {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: clamp(46px, 8vw, 88px);
+}
+
+.runner {
+  position: relative;
+  padding: clamp(24px, 3vw, 34px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    var(--surface-2),
+    var(--surface) 60%
+  );
+  overflow: hidden;
+  transition: border-color 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.runner::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-line),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+
+.runner:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-3px);
+}
+
+.runner:hover::before {
+  opacity: 1;
+}
+
+.runner.is-pending {
+  border-style: dashed;
+  border-color: var(--border-soft);
+}
+
+.runner.is-leader::before {
+  opacity: 1;
+}
+
+.runner-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: clamp(26px, 4vw, 44px);
+}
+
+.runner-name {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.runner-state {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.runner-state.ok {
+  color: var(--accent);
+  border-color: var(--accent-line);
+}
+
+.runner-state.debt {
+  color: #ffb84d;
+  border-color: rgba(255, 184, 77, 0.3);
+}
+
+.runner-km {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.km-num {
+  font-size: clamp(3.2rem, 9vw, 5.4rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.km-unit {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.progress {
+  height: 8px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #9bcc00, var(--accent));
+  box-shadow: 0 0 14px var(--accent-soft);
+  transition: width 1.2s var(--ease);
+}
+
+.progress-fill.over {
+  background: linear-gradient(90deg, var(--accent), #ffffff);
+}
+
+.runner-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.runner-meta b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.meta-remaining-wrap b {
+  color: #ffb84d;
+}
+
+.runner.is-pending .km-num,
+.runner.is-done .meta-remaining-wrap b {
+  color: var(--text);
+}
+
+.runner.is-pending .km-num {
+  color: var(--muted-2);
+}
+
+/* ---------- Statusbar ---------- */
+
+.statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  align-items: center;
+  margin-top: clamp(40px, 7vw, 72px);
+  padding-top: 22px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted-2);
+}
+
+.statusbar b {
+  color: var(--muted);
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+.statusbar .st span {
+  color: var(--text);
+}
+
+.statusbar .sample {
+  margin-left: auto;
+  color: #ffb84d;
+  border: 1px solid rgba(255, 184, 77, 0.3);
+  border-radius: 100px;
+  padding: 4px 10px;
+}
+
+/* ---------- Animação de entrada ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: reveal 0.9s var(--ease) forwards;
+  animation-delay: calc(var(--d, 0) * 90ms + 60ms);
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.runner {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: reveal 0.9s var(--ease) forwards;
+}
+
+.runner:nth-child(1) {
+  animation-delay: 0.42s;
+}
+.runner:nth-child(2) {
+  animation-delay: 0.52s;
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 720px) {
+  .runners {
+    grid-template-columns: 1fr;
+  }
+  .counter {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .counter-side {
+    padding-bottom: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+  }
+  .topbar {
+    font-size: 11px;
+  }
+}
+
+/* ---------- Acessibilidade ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .runner {
+    opacity: 1;
+    transform: none;
+  }
+}

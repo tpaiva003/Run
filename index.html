@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Um Golo · Um Km — Desafio Mundial 2026</title>
+    <meta
+      name="description"
+      content="Por cada golo do Mundial 2026, corremos 1 km. Daniel × José."
+    />
+    <meta name="theme-color" content="#0a0a0b" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true">
+      <div class="bg-grid"></div>
+      <div class="bg-glow"></div>
+      <div class="bg-grain"></div>
+    </div>
+
+    <header class="topbar reveal">
+      <span class="brand mono">UM&nbsp;GOLO&nbsp;·&nbsp;UM&nbsp;KM</span>
+      <span class="live mono" id="liveTag">
+        <i class="live-dot"></i><span data-live-label>AO VIVO</span>
+      </span>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <p class="eyebrow mono reveal" style="--d: 0">
+          FIFA WORLD CUP 2026 — DESAFIO
+        </p>
+        <h1 class="display reveal" style="--d: 1">
+          Por cada golo do Mundial,<br />
+          corremos <span class="hl">1&nbsp;km</span>.
+        </h1>
+
+        <div class="counter reveal" style="--d: 2">
+          <div class="counter-num" id="goals" data-count="0">0</div>
+          <div class="counter-side">
+            <span class="counter-unit mono">GOLOS</span>
+            <span class="counter-sub mono">= KM A CORRER, CADA UM</span>
+          </div>
+        </div>
+
+        <p class="since mono reveal" style="--d: 3">
+          <span class="tick">▸</span> desde o primeiro golo
+          <b id="firstGoal">—</b>
+        </p>
+      </section>
+
+      <section class="runners" id="runners" aria-label="Atletas">
+        <!-- preenchido por app.js -->
+      </section>
+
+      <footer class="statusbar mono reveal" style="--d: 4">
+        <span class="st"><b>ÚLT. ATUALIZAÇÃO</b> <span id="updated">—</span></span>
+        <span class="st"><b>JOGOS</b> <span id="matches">—</span></span>
+        <span class="st"><b>FONTE</b> ESPN · FIFA WORLD CUP</span>
+        <span class="st sample" id="sampleTag" hidden>DADOS DE EXEMPLO</span>
+      </footer>
+    </main>
+
+    <template id="runnerTpl">
+      <article class="runner">
+        <div class="runner-head">
+          <span class="runner-name"></span>
+          <span class="runner-state mono"></span>
+        </div>
+        <div class="runner-km">
+          <span class="km-num" data-count="0">0</span>
+          <span class="km-unit mono">km corridos</span>
+        </div>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="progress-fill"></div>
+        </div>
+        <div class="runner-meta mono">
+          <span><b class="meta-required">—</b> meta</span>
+          <span class="meta-remaining-wrap"><b class="meta-remaining">—</b> em falta</span>
+        </div>
+      </article>
+    </template>
+
+    <script src="assets/app.js" defer></script>
+  </body>
+</html>
