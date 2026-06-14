@@ -1,6 +1,6 @@
 {
-  "isSample": true,
-  "generatedAt": "2026-06-14T00:00:00.000Z",
+  "isSample": false,
+  "generatedAt": "2026-06-14T20:30:43.498Z",
   "competition": {
     "name": "FIFA World Cup 2026",
     "startDate": "2026-06-11"
@@ -10,29 +10,31 @@
     "kmPerGoal": 1
   },
   "goals": {
-    "total": 38,
-    "matchesPlayed": 13,
-    "firstGoalDate": "2026-06-11T22:00:00Z"
+    "total": 27,
+    "matchesPlayed": 10,
+    "firstGoalDate": "2026-06-11T19:00Z"
   },
   "runners": [
     {
       "id": "daniel",
       "name": "Daniel",
       "km": 21.5,
-      "required": 38,
-      "remaining": 16.5,
-      "progress": 0.5658,
-      "status": "ok"
+      "required": 27,
+      "remaining": 5.5,
+      "progress": 0.7962962962962963,
+      "status": "stale"
     },
     {
       "id": "jose",
       "name": "José",
       "km": null,
-      "required": 38,
+      "required": 27,
       "remaining": null,
       "progress": null,
       "status": "pending"
     }
   ],
-  "errors": []
+  "errors": [
+    "km Daniel: HTTP 401 ao ler a folha"
+  ]
 }
