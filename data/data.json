@@ -17,12 +17,13 @@
   "runners": [
     {
       "id": "daniel",
-      "name": "Daniel",
-      "km": 21.5,
+      "name": "Tiago",
+      "km": null,
       "required": 27,
-      "remaining": 5.5,
-      "progress": 0.7962962962962963,
-      "status": "stale"
+      "remaining": null,
+      "progress": null,
+      "status": "pending",
+      "runs": []
     },
     {
       "id": "jose",
@@ -31,10 +32,9 @@
       "required": 27,
       "remaining": null,
       "progress": null,
-      "status": "pending"
+      "status": "pending",
+      "runs": []
     }
   ],
-  "errors": [
-    "km Daniel: HTTP 401 ao ler a folha"
-  ]
+  "errors": []
 }

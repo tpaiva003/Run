@@ -156,14 +156,13 @@ function looksLikeDistanceHeader(h) {
   return /(km|dist|distan)/i.test(h || "");
 }
 
-function sumColumn(rows, colIndex, hasHeader) {
-  let sum = 0;
-  const start = hasHeader ? 1 : 0;
-  for (let r = start; r < rows.length; r++) {
-    const n = toNumber(rows[r][colIndex]);
-    if (n != null) sum += n;
-  }
-  return sum;
+// Heurística simples para reconhecer uma data (coluna do detalhe).
+function looksLikeDate(s) {
+  if (!s) return false;
+  if (/^\d{1,2}[\/.\-]\d{1,2}([\/.\-]\d{2,4})?$/.test(s)) return true; // 11/06 ou 11/06/2026
+  if (/^\d{4}-\d{1,2}-\d{1,2}/.test(s)) return true; // ISO
+  if (/\d{1,2}\s*(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)/i.test(s)) return true;
+  return false;
 }
 
 // Dado o CSV já em linhas, descobre a coluna da distância e soma-a.
@@ -209,21 +208,97 @@ function computeKm(rows, sheet = {}) {
   }
   if (colIndex === -1) throw new Error("nenhuma coluna numérica encontrada");
 
-  const km = sumColumn(rows, colIndex, hasHeader);
-  return { km: Math.round(km * 100) / 100, colIndex, label: header[colIndex] ?? colIndex };
+  // Coluna das datas (para o detalhe): cabeçalho "data"/"dia" ou valores que parecem datas.
+  let dateIndex = -1;
+  if (hasHeader) {
+    dateIndex = header.findIndex((h) => /(data|date|dia)/i.test(h));
+  }
+  if (dateIndex === -1) {
+    for (let c = 0; c < header.length; c++) {
+      if (c === colIndex) continue;
+      let hits = 0;
+      let total = 0;
+      for (let r = hasHeader ? 1 : 0; r < rows.length; r++) {
+        const v = (rows[r][c] ?? "").trim();
+        if (!v) continue;
+        total++;
+        if (looksLikeDate(v)) hits++;
+      }
+      if (total > 0 && hits >= total * 0.6) {
+        dateIndex = c;
+        break;
+      }
+    }
+  }
+
+  // Lista de corridas + total calculado a partir dela (fica sempre consistente).
+  const runs = [];
+  let sum = 0;
+  for (let r = hasHeader ? 1 : 0; r < rows.length; r++) {
+    const km = toNumber(rows[r][colIndex]);
+    if (km == null) continue;
+    sum += km;
+    runs.push({
+      date: dateIndex >= 0 ? (rows[r][dateIndex] ?? "").trim() || null : null,
+      km: Math.round(km * 100) / 100,
+    });
+  }
+
+  return {
+    km: Math.round(sum * 100) / 100,
+    colIndex,
+    label: header[colIndex] ?? colIndex,
+    dateLabel: dateIndex >= 0 ? header[dateIndex] ?? dateIndex : null,
+    runs,
+  };
+}
+
+// Tenta dois endpoints de exportação CSV do Google Sheets.
+// Ambos exigem a folha partilhada como "Qualquer pessoa com o link: Visualizador".
+async function fetchSheetCsv(id, gid) {
+  const urls = [
+    `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`,
+    `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`,
+  ];
+  let lastStatus = 0;
+  for (const url of urls) {
+    let res;
+    try {
+      res = await fetch(url, {
+        headers: { "User-Agent": "um-golo-um-km/1.0" },
+        redirect: "follow",
+      });
+    } catch (e) {
+      lastStatus = lastStatus || -1;
+      continue;
+    }
+    if (res.ok) {
+      const text = await res.text();
+      // Uma folha privada devolve a página de login (HTML), não CSV.
+      if (/^\s*<(!doctype|html)/i.test(text)) {
+        lastStatus = 401;
+        continue;
+      }
+      return text;
+    }
+    lastStatus = res.status;
+  }
+  throw new Error(
+    `HTTP ${lastStatus} ao ler a folha — partilha-a como ` +
+      `"Qualquer pessoa com o link: Visualizador"`
+  );
 }
 
 async function fetchKm(sheet) {
   const gid = sheet.gid ?? "0";
-  const url = `https://docs.google.com/spreadsheets/d/${sheet.id}/gviz/tq?tqx=out:csv&gid=${gid}`;
-  const res = await fetch(url, {
-    headers: { "User-Agent": "um-golo-um-km/1.0" },
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status} ao ler a folha`);
-  const rows = parseCsv(await res.text());
-  const { km, label, colIndex } = computeKm(rows, sheet);
-  log(`km: coluna "${label}" (índice ${colIndex}), total ${km.toFixed(2)} km`);
-  return km;
+  const rows = parseCsv(await fetchSheetCsv(sheet.id, gid));
+  const { km, label, colIndex, dateLabel, runs } = computeKm(rows, sheet);
+  log(
+    `km: coluna "${label}" (índice ${colIndex})` +
+      `${dateLabel ? `, datas "${dateLabel}"` : ", sem coluna de datas"}, ` +
+      `${runs.length} corrida(s), total ${km.toFixed(2)} km`
+  );
+  return { km, runs };
 }
 
 /* ------------------------------------------------------------------ */
@@ -234,13 +309,17 @@ async function main() {
   const config = await readJson(CONFIG_PATH);
   if (!config) throw new Error("config.json não encontrado");
   const previous = (await readJson(DATA_PATH)) ?? {};
+  const prevWasSample = previous.isSample === true; // não arrastar dados de exemplo
   const prevRunners = new Map(
     (previous.runners ?? []).map((r) => [r.id, r])
   );
   const errors = [];
 
   // Golos
-  let goals = previous.goals ?? { total: 0, matchesPlayed: 0, firstGoalDate: null };
+  let goals =
+    !prevWasSample && previous.goals
+      ? previous.goals
+      : { total: 0, matchesPlayed: 0, firstGoalDate: null };
   try {
     goals = await fetchGoals(config.competition);
     log(`golos: ${goals.total} em ${goals.matchesPlayed} jogos`);
@@ -265,13 +344,17 @@ async function main() {
         remaining: null,
         progress: null,
         status: "pending",
+        runs: [],
       });
       continue;
     }
-    let km = prev.km ?? null;
+    let km = prevWasSample ? null : prev.km ?? null;
+    let runs = prevWasSample ? [] : prev.runs ?? [];
     let status = "ok";
     try {
-      km = await fetchKm(r.sheet);
+      const result = await fetchKm(r.sheet);
+      km = result.km;
+      runs = result.runs;
     } catch (e) {
       warn(`km ${r.id}: ${e.message} — mantido valor anterior`);
       errors.push(`km ${r.name}: ${e.message}`);
@@ -285,6 +368,7 @@ async function main() {
       remaining: km == null ? null : Math.round((required - km) * 100) / 100,
       progress: km == null || required === 0 ? 0 : km / required,
       status,
+      runs,
     });
   }
 
@@ -308,7 +392,7 @@ async function main() {
 }
 
 // Exporta para testes; corre main() só quando invocado diretamente.
-export { parseCsv, toNumber, sumColumn, computeKm, fetchKm, fetchGoals, main };
+export { parseCsv, toNumber, computeKm, fetchKm, fetchGoals, main };
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   main().catch((e) => {

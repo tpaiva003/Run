@@ -71,7 +71,7 @@
     <template id="runnerTpl">
       <article class="runner">
         <div class="runner-head">
-          <span class="runner-name"></span>
+          <button class="runner-name" type="button" aria-haspopup="dialog"></button>
           <span class="runner-state mono"></span>
         </div>
         <div class="runner-km">
@@ -92,6 +92,46 @@
         </div>
       </article>
     </template>
+
+    <div class="modal" id="modal" hidden>
+      <div class="modal-backdrop" data-close></div>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalName"
+      >
+        <button
+          class="modal-close mono"
+          type="button"
+          data-close
+          aria-label="Fechar"
+        >
+          ✕
+        </button>
+        <p class="modal-eyebrow mono">REGISTO DE CORRIDAS</p>
+        <h2 class="modal-name" id="modalName">—</h2>
+        <div class="modal-stat mono">
+          <span><b id="modalKm">—</b> km corridos</span>
+          <span class="modal-sep">/</span>
+          <span><b id="modalRuns">—</b> corridas</span>
+        </div>
+        <div class="modal-body">
+          <table class="runs-table">
+            <thead>
+              <tr>
+                <th class="mono">DATA</th>
+                <th class="mono runs-km-col">KM</th>
+              </tr>
+            </thead>
+            <tbody id="runsBody"></tbody>
+          </table>
+          <p class="runs-empty mono" id="runsEmpty" hidden>
+            Sem corridas registadas ainda.
+          </p>
+        </div>
+      </div>
+    </div>
 
     <script src="assets/app.js" defer></script>
   </body>
