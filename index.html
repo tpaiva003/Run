@@ -9,6 +9,8 @@
       content="Por cada golo do Mundial 2026, corremos 1 km. Daniel × José."
     />
     <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/favicon.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,6 +24,7 @@
     <div class="bg" aria-hidden="true">
       <div class="bg-grid"></div>
       <div class="bg-glow"></div>
+      <div class="bg-trophy"></div>
       <div class="bg-grain"></div>
     </div>
 
@@ -155,6 +158,19 @@
         </div>
       </div>
     </div>
+
+    <audio id="anthem" src="assets/anthem.mp3" loop preload="none"></audio>
+    <button
+      id="soundToggle"
+      class="sound mono"
+      type="button"
+      aria-pressed="false"
+      aria-label="Ligar ou desligar a música"
+      hidden
+    >
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="sound-label">MÚSICA</span>
+    </button>
 
     <script src="assets/app.js" defer></script>
   </body>

@@ -261,6 +261,62 @@ document.querySelectorAll("img[data-optional]").forEach((img) => {
   if (img.complete && img.naturalWidth === 0) hideOptionalImage(img);
 });
 
+/* ---------- música ---------- */
+
+const anthem = $("#anthem");
+const soundBtn = $("#soundToggle");
+
+function reflectSound(playing) {
+  soundBtn.classList.toggle("is-playing", playing);
+  soundBtn.setAttribute("aria-pressed", String(playing));
+  soundBtn.querySelector(".sound-label").textContent = playing
+    ? "A TOCAR"
+    : "MÚSICA";
+}
+
+async function initSound() {
+  if (!anthem || !soundBtn) return;
+  // Só mostra o botão se existir mesmo um ficheiro de música em assets/.
+  let available = false;
+  try {
+    const res = await fetch(anthem.src, { method: "HEAD" });
+    available = res.ok;
+  } catch {
+    available = false;
+  }
+  if (!available) return; // botão fica escondido
+
+  soundBtn.hidden = false;
+  anthem.volume = 0.55;
+
+  soundBtn.addEventListener("click", async () => {
+    if (anthem.paused) {
+      try {
+        await anthem.play();
+        localStorage.setItem("anthem", "on");
+      } catch {
+        /* o browser pode bloquear; fica em pausa */
+      }
+    } else {
+      anthem.pause();
+      localStorage.setItem("anthem", "off");
+    }
+  });
+  anthem.addEventListener("play", () => reflectSound(true));
+  anthem.addEventListener("pause", () => reflectSound(false));
+  anthem.addEventListener("error", () => {
+    soundBtn.hidden = true;
+  });
+
+  // Retoma se o utilizador já tinha ligado a música numa visita anterior.
+  if (localStorage.getItem("anthem") === "on") {
+    anthem.play().catch(() => {
+      /* autoplay bloqueado até haver um clique */
+    });
+  }
+}
+initSound();
+
 /* ---------- carregamento ---------- */
 
 async function load() {
