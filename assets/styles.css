@@ -321,9 +321,47 @@ b {
 }
 
 .runner-name {
+  font-family: inherit;
   font-size: clamp(22px, 3vw, 30px);
   font-weight: 600;
   letter-spacing: -0.02em;
+  color: var(--text);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s var(--ease);
+}
+
+.runner-name::after {
+  content: "↗";
+  font-size: 0.6em;
+  color: var(--muted);
+  opacity: 0.55;
+  transform: translateY(-2px);
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+
+.runner-name:hover,
+.runner-name:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+.runner-name:hover::after,
+.runner-name:focus-visible::after {
+  color: var(--accent);
+  opacity: 1;
+  transform: translate(2px, -4px);
+}
+
+.runner-name:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
 
 .runner-state {
@@ -474,6 +512,155 @@ b {
 }
 .runner:nth-child(2) {
   animation-delay: 0.52s;
+}
+
+/* ---------- Modal: registo de corridas ---------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 6, 0.74);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.26s var(--ease);
+}
+
+.modal-card {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 4vw, 34px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #16181c, #101113);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  transition: opacity 0.26s var(--ease), transform 0.26s var(--ease);
+}
+
+.modal.is-open .modal-backdrop {
+  opacity: 1;
+}
+.modal.is-open .modal-card {
+  opacity: 1;
+  transform: none;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.modal-close:hover,
+.modal-close:focus-visible {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.25);
+  outline: none;
+}
+
+.modal-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.modal-name {
+  font-size: clamp(26px, 5vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.modal-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.modal-stat b {
+  color: var(--accent);
+  font-weight: 600;
+}
+.modal-sep {
+  color: var(--muted-2);
+}
+
+.modal-body {
+  overflow-y: auto;
+  margin-top: 2px;
+}
+
+.runs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.runs-table[hidden] {
+  display: none;
+}
+.runs-table th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 400;
+  color: var(--muted-2);
+  padding: 14px 0 10px;
+  background: #15171b;
+}
+.runs-table td {
+  padding: 13px 0;
+  font-size: 14px;
+  color: var(--text);
+  border-top: 1px solid var(--border-soft);
+}
+.runs-km-col {
+  text-align: right;
+}
+.runs-table td.runs-km-col {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.runs-empty {
+  padding: 30px 0 10px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
 }
 
 /* ---------- Responsivo ---------- */

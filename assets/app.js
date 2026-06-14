@@ -12,6 +12,8 @@ const nf1 = new Intl.NumberFormat("pt-PT", { maximumFractionDigits: 1 });
 
 const $ = (sel, root = document) => root.querySelector(sel);
 
+let currentData = null; // último data.json carregado (para o modal)
+
 /* ---------- utilidades ---------- */
 
 function formatDate(iso, withTime = false) {
@@ -149,6 +151,7 @@ function renderRunners(data) {
 }
 
 function render(data) {
+  currentData = data;
   animateNumber($("#goals"), data.goals?.total ?? 0, { decimals: 0 });
   $("#firstGoal").textContent = data.goals?.firstGoalDate
     ? formatDate(data.goals.firstGoalDate, true)
@@ -171,6 +174,79 @@ function render(data) {
   renderRunners(data);
   document.title = `${data.goals?.total ?? 0} golos · Um Golo · Um Km`;
 }
+
+/* ---------- modal: registo de corridas ---------- */
+
+const modal = $("#modal");
+let lastFocused = null;
+
+function formatRunDate(date, i) {
+  if (!date) return `Corrida ${i + 1}`;
+  if (/^\d{4}-\d{1,2}-\d{1,2}/.test(date)) {
+    const d = new Date(date);
+    if (!Number.isNaN(d.getTime())) {
+      return d.toLocaleDateString("pt-PT", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    }
+  }
+  return date; // mostra tal como está na folha (ex.: 11/06/2026)
+}
+
+function openModal(id) {
+  const r = (currentData?.runners ?? []).find((x) => x.id === id);
+  if (!r) return;
+  const runs = Array.isArray(r.runs) ? r.runs : [];
+
+  $("#modalName").textContent = r.name;
+  $("#modalKm").textContent = typeof r.km === "number" ? nf1.format(r.km) : "—";
+  $("#modalRuns").textContent = nf.format(runs.length);
+
+  const body = $("#runsBody");
+  body.replaceChildren();
+  runs.forEach((run, i) => {
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td");
+    td1.textContent = formatRunDate(run.date, i);
+    const td2 = document.createElement("td");
+    td2.className = "runs-km-col";
+    td2.textContent = `${nf1.format(run.km)} km`;
+    tr.append(td1, td2);
+    body.appendChild(tr);
+  });
+  $("#runsEmpty").hidden = runs.length > 0;
+  $(".runs-table").hidden = runs.length === 0;
+
+  lastFocused = document.activeElement;
+  modal.hidden = false;
+  document.body.style.overflow = "hidden";
+  requestAnimationFrame(() => modal.classList.add("is-open"));
+  $(".modal-close").focus();
+}
+
+function closeModal() {
+  modal.classList.remove("is-open");
+  document.body.style.overflow = "";
+  setTimeout(() => (modal.hidden = true), REDUCED ? 0 : 260);
+  if (lastFocused && typeof lastFocused.focus === "function") {
+    lastFocused.focus();
+  }
+}
+
+$("#runners").addEventListener("click", (e) => {
+  const btn = e.target.closest(".runner-name");
+  if (!btn) return;
+  const card = btn.closest(".runner");
+  if (card) openModal(card.dataset.id);
+});
+modal.addEventListener("click", (e) => {
+  if (e.target.hasAttribute("data-close")) closeModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.hidden) closeModal();
+});
 
 /* ---------- carregamento ---------- */
 
