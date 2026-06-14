@@ -1,0 +1,38 @@
+{
+  "isSample": true,
+  "generatedAt": "2026-06-14T00:00:00.000Z",
+  "competition": {
+    "name": "FIFA World Cup 2026",
+    "startDate": "2026-06-11"
+  },
+  "challenge": {
+    "title": "UM GOLO · UM KM",
+    "kmPerGoal": 1
+  },
+  "goals": {
+    "total": 38,
+    "matchesPlayed": 13,
+    "firstGoalDate": "2026-06-11T22:00:00Z"
+  },
+  "runners": [
+    {
+      "id": "daniel",
+      "name": "Daniel",
+      "km": 21.5,
+      "required": 38,
+      "remaining": 16.5,
+      "progress": 0.5658,
+      "status": "ok"
+    },
+    {
+      "id": "jose",
+      "name": "José",
+      "km": null,
+      "required": 38,
+      "remaining": null,
+      "progress": null,
+      "status": "pending"
+    }
+  ],
+  "errors": []
+}

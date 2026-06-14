@@ -1,0 +1,28 @@
+{
+  "competition": {
+    "name": "FIFA World Cup 2026",
+    "espnLeague": "fifa.world",
+    "startDate": "2026-06-11",
+    "endDate": "2026-07-19"
+  },
+  "challenge": {
+    "title": "UM GOLO · UM KM",
+    "kmPerGoal": 1
+  },
+  "runners": [
+    {
+      "id": "daniel",
+      "name": "Daniel",
+      "sheet": {
+        "id": "17O6iPs0HXj9fTmBd0Q27Na1AKAZNxIbEmMVyMb51790",
+        "gid": "0",
+        "distanceColumn": null
+      }
+    },
+    {
+      "id": "jose",
+      "name": "José",
+      "sheet": null
+    }
+  ]
+}

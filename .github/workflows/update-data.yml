@@ -1,0 +1,51 @@
+name: Atualizar dados do desafio
+
+on:
+  # A cada 30 minutos. (O GitHub pode atrasar agendamentos em horas de pico.)
+  schedule:
+    - cron: "*/30 * * * *"
+  # Permite correr manualmente em Actions -> Run workflow.
+  workflow_dispatch:
+  # Corre também quando o código muda, para validar logo.
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "config.json"
+      - ".github/workflows/update-data.yml"
+
+# Necessário para fazer commit do data/data.json atualizado.
+permissions:
+  contents: write
+
+# Evita execuções sobrepostas.
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Atualizar dados
+        run: node scripts/update-data.mjs
+
+      - name: Commit se houver alterações
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/data.json; then
+            echo "Sem alterações nos dados."
+          else
+            git add data/data.json
+            git commit -m "chore: atualizar dados do desafio"
+            git push
+          fi
