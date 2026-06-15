@@ -198,6 +198,46 @@ b {
   background: var(--accent);
 }
 
+.refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.refresh-ball {
+  width: 22px;
+  height: 22px;
+  display: block;
+  transition: transform 0.5s var(--ease), filter 0.3s var(--ease);
+  filter: grayscale(0.15);
+}
+.refresh:hover .refresh-ball,
+.refresh:focus-visible .refresh-ball {
+  transform: rotate(45deg);
+  filter: grayscale(0);
+}
+.refresh:focus-visible {
+  outline: none;
+}
+.refresh.is-loading {
+  cursor: progress;
+}
+.refresh.is-loading .refresh-ball {
+  filter: grayscale(0);
+  animation: ballspin 0.9s linear infinite;
+}
+@keyframes ballspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .live {
   display: inline-flex;
   align-items: center;

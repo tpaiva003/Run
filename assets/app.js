@@ -63,6 +63,7 @@ const I18N = {
     hAgo: "há {n} h",
     run: "Corrida",
     goalsWord: "golos",
+    refresh: "Atualizar dados",
   },
   en: {
     introEyebrow: "FIFA WORLD CUP 2026 · HEALTH · CHALLENGE",
@@ -108,6 +109,7 @@ const I18N = {
     hAgo: "{n} h ago",
     run: "Run",
     goalsWord: "goals",
+    refresh: "Refresh data",
   },
 };
 
@@ -122,6 +124,11 @@ function applyStaticI18n() {
   });
   document.querySelectorAll("[data-i18n-html]").forEach((el) => {
     el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+    const label = t(el.dataset.i18nAria);
+    el.setAttribute("aria-label", label);
+    el.setAttribute("title", label);
   });
   document.querySelectorAll(".lang-opt").forEach((b) => {
     b.classList.toggle("is-active", b.dataset.lang === lang);
@@ -538,3 +545,19 @@ setInterval(load, REFRESH_MS);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") load();
 });
+
+/* ---------- botão de atualizar (bola Trionda) ---------- */
+const refreshBtn = $("#refreshBtn");
+let refreshing = false;
+async function manualRefresh() {
+  if (refreshing) return;
+  refreshing = true;
+  if (refreshBtn) refreshBtn.classList.add("is-loading");
+  const start = performance.now();
+  await load(); // vai buscar o data.json mais recente
+  const wait = 700 - (performance.now() - start); // gira pelo menos 0,7s
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  if (refreshBtn) refreshBtn.classList.remove("is-loading");
+  refreshing = false;
+}
+if (refreshBtn) refreshBtn.addEventListener("click", manualRefresh);
