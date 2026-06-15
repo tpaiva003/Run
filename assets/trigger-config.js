@@ -4,4 +4,4 @@
 // para o botão da bola DISPARAR uma recolha nova (golos + folha) na hora.
 //
 // Se deixares "", o botão apenas "puxa" os dados mais recentes já gravados.
-window.TRIONDA_TRIGGER_URL = "";
+window.TRIONDA_TRIGGER_URL = "https://trionda.tiago-afp12.workers.dev/";
