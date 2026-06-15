@@ -144,6 +144,18 @@ function renderRunners(data) {
       remEl.textContent = `${nf1.format(remaining)} km`;
       remLabel.textContent = " em falta";
     }
+
+    // estatísticas
+    const stats = r.stats || {};
+    $(".stat-longest", card).textContent = pending
+      ? "—"
+      : `${nf1.format(stats.longestRun || 0)} km`;
+    $(".stat-runstreak", card).textContent = pending
+      ? "—"
+      : nf.format(stats.runStreak || 0);
+    $(".stat-reststreak", card).textContent = pending
+      ? "—"
+      : nf.format(stats.restStreak || 0);
   });
 
   // remove cartões que já não existam na config
