@@ -261,6 +261,35 @@ document.querySelectorAll("img[data-optional]").forEach((img) => {
   if (img.complete && img.naturalWidth === 0) hideOptionalImage(img);
 });
 
+/* ---------- música (playlist Spotify) ---------- */
+
+const musicBtn = $("#musicToggle");
+const musicPanel = $("#musicPanel");
+const musicFrame = musicPanel && musicPanel.querySelector(".music-frame");
+let musicLoaded = false;
+
+function setMusicOpen(open) {
+  if (!musicPanel || !musicBtn) return;
+  musicPanel.hidden = !open;
+  musicBtn.setAttribute("aria-expanded", String(open));
+  musicBtn.classList.toggle("is-playing", open);
+  // Carrega o Spotify só ao abrir (mais rápido e sem cookies à entrada).
+  if (open && !musicLoaded && musicFrame) {
+    musicFrame.src = musicFrame.dataset.src;
+    musicLoaded = true;
+  }
+}
+
+if (musicBtn && musicPanel) {
+  musicBtn.addEventListener("click", () => setMusicOpen(musicPanel.hidden));
+  musicPanel.addEventListener("click", (e) => {
+    if (e.target.hasAttribute("data-music-close")) setMusicOpen(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !musicPanel.hidden) setMusicOpen(false);
+  });
+}
+
 /* ---------- carregamento ---------- */
 
 async function load() {

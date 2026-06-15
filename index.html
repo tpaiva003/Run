@@ -9,6 +9,8 @@
       content="Por cada golo do Mundial 2026, corremos 1 km. Daniel × José."
     />
     <meta name="theme-color" content="#0a0a0b" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/favicon.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,6 +24,7 @@
     <div class="bg" aria-hidden="true">
       <div class="bg-grid"></div>
       <div class="bg-glow"></div>
+      <div class="bg-trophy"></div>
       <div class="bg-grain"></div>
     </div>
 
@@ -154,6 +157,42 @@
           </p>
         </div>
       </div>
+    </div>
+
+    <div class="music">
+      <div id="musicPanel" class="music-panel" hidden>
+        <div class="music-head mono">
+          <span>BANDA SONORA</span>
+          <button
+            class="music-close"
+            type="button"
+            data-music-close
+            aria-label="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+        <iframe
+          class="music-frame"
+          data-src="https://open.spotify.com/embed/playlist/1ejSOJIruEObzObTgSC2A9?utm_source=generator"
+          title="Playlist da banda sonora no Spotify"
+          height="352"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+      <button
+        id="musicToggle"
+        class="sound mono"
+        type="button"
+        aria-expanded="false"
+        aria-controls="musicPanel"
+        aria-label="Abrir a playlist do desafio"
+      >
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="sound-label">MÚSICA</span>
+      </button>
     </div>
 
     <script src="assets/app.js" defer></script>
