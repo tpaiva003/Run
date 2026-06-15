@@ -159,18 +159,41 @@
       </div>
     </div>
 
-    <audio id="anthem" src="assets/anthem.mp3" loop preload="none"></audio>
-    <button
-      id="soundToggle"
-      class="sound mono"
-      type="button"
-      aria-pressed="false"
-      aria-label="Ligar ou desligar a música"
-      hidden
-    >
-      <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="sound-label">MÚSICA</span>
-    </button>
+    <div class="music">
+      <div id="musicPanel" class="music-panel" hidden>
+        <div class="music-head mono">
+          <span>BANDA SONORA</span>
+          <button
+            class="music-close"
+            type="button"
+            data-music-close
+            aria-label="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+        <iframe
+          class="music-frame"
+          data-src="https://open.spotify.com/embed/playlist/1ejSOJIruEObzObTgSC2A9?utm_source=generator"
+          title="Playlist da banda sonora no Spotify"
+          height="352"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+      <button
+        id="musicToggle"
+        class="sound mono"
+        type="button"
+        aria-expanded="false"
+        aria-controls="musicPanel"
+        aria-label="Abrir a playlist do desafio"
+      >
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="sound-label">MÚSICA</span>
+      </button>
+    </div>
 
     <script src="assets/app.js" defer></script>
   </body>
