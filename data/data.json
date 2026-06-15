@@ -1,6 +1,6 @@
 {
   "isSample": false,
-  "generatedAt": "2026-06-14T20:47:51.877Z",
+  "generatedAt": "2026-06-15T07:29:15.176Z",
   "competition": {
     "name": "FIFA World Cup 2026",
     "startDate": "2026-06-11"
@@ -10,33 +10,52 @@
     "kmPerGoal": 1
   },
   "goals": {
-    "total": 27,
-    "matchesPlayed": 10,
+    "total": 38,
+    "matchesPlayed": 12,
     "firstGoalDate": "2026-06-11T19:00Z"
   },
   "runners": [
     {
       "id": "daniel",
       "name": "Tiago",
-      "km": null,
-      "required": 27,
-      "remaining": null,
-      "progress": 0,
-      "status": "error",
-      "runs": []
+      "km": 57097.8,
+      "required": 38,
+      "remaining": -57059.8,
+      "progress": 1502.5736842105264,
+      "status": "ok",
+      "runs": [
+        {
+          "date": "2026-06-13",
+          "km": 835.98
+        },
+        {
+          "date": "2026-06-14",
+          "km": 14450.89
+        },
+        {
+          "date": "2026-06-14",
+          "km": 13936.97
+        },
+        {
+          "date": "2026-06-14",
+          "km": 13936.97
+        },
+        {
+          "date": "2026-06-14",
+          "km": 13936.97
+        }
+      ]
     },
     {
       "id": "jose",
       "name": "José",
       "km": null,
-      "required": 27,
+      "required": 38,
       "remaining": null,
       "progress": null,
       "status": "pending",
       "runs": []
     }
   ],
-  "errors": [
-    "km Tiago: HTTP 401 ao ler a folha — partilha-a como \"Qualquer pessoa com o link: Visualizador\""
-  ]
+  "errors": []
 }
