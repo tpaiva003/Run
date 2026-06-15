@@ -156,6 +156,18 @@ function looksLikeDistanceHeader(h) {
   return /(km|dist|distan)/i.test(h || "");
 }
 
+// Fator para converter a coluna em km. Deteta metros pelo cabeçalho
+// (ex.: "Distance (m)") ou aceita override na config (distanceUnit: "m"|"km").
+function unitFactor(configUnit, header) {
+  if (configUnit) {
+    return /^m(et|ts)?/i.test(String(configUnit).trim()) ? 0.001 : 1;
+  }
+  const h = (header || "").toLowerCase();
+  if (/\bkm\b|quil[oó]met|kms/.test(h)) return 1; // já em km
+  if (/\(m\)|met(ro|er)s?|\bmts?\b/.test(h)) return 0.001; // metros -> km
+  return 1; // sem indicação: assume km
+}
+
 // Heurística simples para reconhecer uma data (coluna do detalhe).
 function looksLikeDate(s) {
   if (!s) return false;
@@ -232,11 +244,14 @@ function computeKm(rows, sheet = {}) {
   }
 
   // Lista de corridas + total calculado a partir dela (fica sempre consistente).
+  // Converte para km conforme a unidade da coluna (metros -> km).
+  const factor = unitFactor(sheet.distanceUnit, header[colIndex]);
   const runs = [];
   let sum = 0;
   for (let r = hasHeader ? 1 : 0; r < rows.length; r++) {
-    const km = toNumber(rows[r][colIndex]);
-    if (km == null) continue;
+    const raw = toNumber(rows[r][colIndex]);
+    if (raw == null) continue;
+    const km = raw * factor;
     sum += km;
     runs.push({
       date: dateIndex >= 0 ? (rows[r][dateIndex] ?? "").trim() || null : null,
@@ -249,6 +264,7 @@ function computeKm(rows, sheet = {}) {
     colIndex,
     label: header[colIndex] ?? colIndex,
     dateLabel: dateIndex >= 0 ? header[dateIndex] ?? dateIndex : null,
+    unit: factor === 0.001 ? "m" : "km",
     runs,
   };
 }
@@ -292,9 +308,9 @@ async function fetchSheetCsv(id, gid) {
 async function fetchKm(sheet) {
   const gid = sheet.gid ?? "0";
   const rows = parseCsv(await fetchSheetCsv(sheet.id, gid));
-  const { km, label, colIndex, dateLabel, runs } = computeKm(rows, sheet);
+  const { km, label, colIndex, dateLabel, unit, runs } = computeKm(rows, sheet);
   log(
-    `km: coluna "${label}" (índice ${colIndex})` +
+    `km: coluna "${label}" (índice ${colIndex}, unidade ${unit})` +
       `${dateLabel ? `, datas "${dateLabel}"` : ", sem coluna de datas"}, ` +
       `${runs.length} corrida(s), total ${km.toFixed(2)} km`
   );
