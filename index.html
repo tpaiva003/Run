@@ -172,15 +172,11 @@
             ✕
           </button>
         </div>
-        <iframe
+        <div
+          id="spotifyEmbed"
           class="music-frame"
-          data-src="https://open.spotify.com/embed/playlist/1ejSOJIruEObzObTgSC2A9?utm_source=generator"
-          title="Playlist da banda sonora no Spotify"
-          height="352"
-          frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        ></iframe>
+          data-uri="spotify:track:0kosUz0jePvjiz4ctmR6wL"
+        ></div>
       </div>
       <button
         id="musicToggle"
@@ -195,6 +191,16 @@
       </button>
     </div>
 
+    <script>
+      // Garante que o callback existe antes de a API do Spotify carregar.
+      window.onSpotifyIframeApiReady = function (api) {
+        window.__spotifyApi = api;
+        if (typeof window.__useSpotifyApi === "function") {
+          window.__useSpotifyApi(api);
+        }
+      };
+    </script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script src="assets/app.js" defer></script>
   </body>
 </html>

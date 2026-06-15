@@ -247,16 +247,19 @@ function computeKm(rows, sheet = {}) {
   // Converte para km conforme a unidade da coluna (metros -> km).
   const factor = unitFactor(sheet.distanceUnit, header[colIndex]);
   const runs = [];
+  const seen = new Set(); // ignora duplicados exatos (mesma data + mesma distância)
   let sum = 0;
   for (let r = hasHeader ? 1 : 0; r < rows.length; r++) {
-    const raw = toNumber(rows[r][colIndex]);
+    const cell = (rows[r][colIndex] ?? "").trim();
+    const raw = toNumber(cell);
     if (raw == null) continue;
+    const date = dateIndex >= 0 ? (rows[r][dateIndex] ?? "").trim() || null : null;
+    const key = `${date ?? ""}|${cell}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
     const km = raw * factor;
     sum += km;
-    runs.push({
-      date: dateIndex >= 0 ? (rows[r][dateIndex] ?? "").trim() || null : null,
-      km: Math.round(km * 100) / 100,
-    });
+    runs.push({ date, km: Math.round(km * 100) / 100 });
   }
 
   return {

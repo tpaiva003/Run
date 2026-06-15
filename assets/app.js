@@ -261,32 +261,92 @@ document.querySelectorAll("img[data-optional]").forEach((img) => {
   if (img.complete && img.naturalWidth === 0) hideOptionalImage(img);
 });
 
-/* ---------- música (playlist Spotify) ---------- */
+/* ---------- música (Spotify iFrame API + arranque ao 1.º gesto) ---------- */
+// Nota: nenhum browser deixa tocar som ANTES de o utilizador interagir.
+// Por isso arrancamos a música no primeiro gesto (clique/tecla/toque) —
+// o mais próximo possível de "autoplay".
 
 const musicBtn = $("#musicToggle");
 const musicPanel = $("#musicPanel");
-const musicFrame = musicPanel && musicPanel.querySelector(".music-frame");
-let musicLoaded = false;
+let spotifyCtl = null;
+let musicAutostarted = false;
 
-function setMusicOpen(open) {
+function setMusicPlayingUI(playing) {
+  if (!musicBtn) return;
+  musicBtn.classList.toggle("is-playing", playing);
+  const lbl = musicBtn.querySelector(".sound-label");
+  if (lbl) lbl.textContent = playing ? "A TOCAR" : "MÚSICA";
+}
+
+function openMusicPanel(open) {
   if (!musicPanel || !musicBtn) return;
   musicPanel.hidden = !open;
   musicBtn.setAttribute("aria-expanded", String(open));
-  musicBtn.classList.toggle("is-playing", open);
-  // Carrega o Spotify só ao abrir (mais rápido e sem cookies à entrada).
-  if (open && !musicLoaded && musicFrame) {
-    musicFrame.src = musicFrame.dataset.src;
-    musicLoaded = true;
+}
+
+function ctl(method) {
+  try {
+    if (spotifyCtl && typeof spotifyCtl[method] === "function") spotifyCtl[method]();
+  } catch (_) {
+    /* controlador ainda não pronto */
   }
 }
 
+function useSpotifyApi(api) {
+  const el = $("#spotifyEmbed");
+  if (!el) return;
+  api.createController(
+    el,
+    { uri: el.dataset.uri, width: "100%", height: 352 },
+    (controller) => {
+      spotifyCtl = controller;
+      controller.addListener("playback_update", (e) => {
+        setMusicPlayingUI(!!(e && e.data && e.data.isPaused === false));
+      });
+      if (musicAutostarted) {
+        openMusicPanel(true);
+        ctl("play");
+      }
+    }
+  );
+}
+if (window.__spotifyApi) useSpotifyApi(window.__spotifyApi);
+else window.__useSpotifyApi = useSpotifyApi;
+
+function musicFirstGesture(ev) {
+  if (musicAutostarted) return;
+  if (ev && ev.target && ev.target.closest && ev.target.closest("#musicToggle")) {
+    return; // o próprio botão trata do arranque
+  }
+  musicAutostarted = true;
+  ["pointerdown", "keydown", "touchstart"].forEach((t) =>
+    window.removeEventListener(t, musicFirstGesture)
+  );
+  openMusicPanel(true);
+  ctl("play");
+}
+["pointerdown", "keydown", "touchstart"].forEach((t) =>
+  window.addEventListener(t, musicFirstGesture, { passive: true })
+);
+
 if (musicBtn && musicPanel) {
-  musicBtn.addEventListener("click", () => setMusicOpen(musicPanel.hidden));
+  musicBtn.addEventListener("click", () => {
+    musicAutostarted = true;
+    const willOpen = musicPanel.hidden;
+    openMusicPanel(willOpen);
+    ctl(willOpen ? "play" : "pause");
+  });
   musicPanel.addEventListener("click", (e) => {
-    if (e.target.hasAttribute("data-music-close")) setMusicOpen(false);
+    if (e.target.hasAttribute("data-music-close")) {
+      openMusicPanel(false);
+      ctl("pause");
+    }
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !musicPanel.hidden) setMusicOpen(false);
+    if (e.key === "Escape" && musicPanel && !musicPanel.hidden) {
+      openMusicPanel(false);
+      ctl("pause");
+    }
   });
 }
 

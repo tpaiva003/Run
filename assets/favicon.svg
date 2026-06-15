@@ -1,15 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="gold" x1="32" y1="6" x2="32" y2="54" gradientUnits="userSpaceOnUse">
+    <linearGradient id="gold" x1="32" y1="4" x2="32" y2="58" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FCE9A6"/>
-      <stop offset=".45" stop-color="#E8B84B"/>
+      <stop offset=".5" stop-color="#E8B84B"/>
       <stop offset="1" stop-color="#A9772A"/>
     </linearGradient>
   </defs>
-  <path d="M21 14c-9 0-13 4-13 10 0 6 5 10 12 10" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M43 14c9 0 13 4 13 10 0 6-5 10-12 10" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M19 9h26v11c0 9-6 16-13 16S19 29 19 20V9z" fill="url(#gold)"/>
-  <path d="M30 35h4v7h-4z" fill="url(#gold)"/>
-  <path d="M23 42h18l-2.5 7H25.5z" fill="url(#gold)"/>
-  <rect x="20" y="49" width="24" height="5" rx="1.5" fill="url(#gold)"/>
+  <!-- globo no topo -->
+  <circle cx="32" cy="12" r="7.5" fill="url(#gold)"/>
+  <!-- corpo da taça a abraçar o globo, a afunilar para a base -->
+  <path fill="url(#gold)" d="M23 19c-2 9 1 19 6 25h6c5-6 8-16 6-25-2 4-5 6-9 6s-7-2-9-6z"/>
+  <!-- pé -->
+  <rect x="29" y="44" width="6" height="3.5" fill="url(#gold)"/>
+  <path fill="url(#gold)" d="M24 47h16l-2 5H26z"/>
+  <!-- banda verde (malaquite) -->
+  <rect x="22.5" y="52" width="19" height="2.4" fill="#1f8a5b"/>
+  <!-- base -->
+  <rect x="21" y="54.2" width="22" height="3.2" rx="1.6" fill="url(#gold)"/>
 </svg>
