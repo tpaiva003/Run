@@ -1,6 +1,6 @@
 {
   "isSample": false,
-  "generatedAt": "2026-06-21T18:21:54.607Z",
+  "generatedAt": "2026-06-21T18:24:23.951Z",
   "competition": {
     "name": "FIFA World Cup 2026",
     "startDate": "2026-06-11"
@@ -18,17 +18,21 @@
     {
       "id": "jose",
       "name": "José",
-      "km": 21.05,
+      "km": 33.11,
       "required": 113,
-      "remaining": 91.95,
-      "progress": 0.18628318584070797,
+      "remaining": 79.89,
+      "progress": 0.2930088495575221,
       "status": "ok",
       "stats": {
-        "longestRun": 10,
+        "longestRun": 12.06,
         "runStreak": 2,
-        "restStreak": 5
+        "restStreak": 4
       },
       "runs": [
+        {
+          "date": "2026-06-21",
+          "km": 12.06
+        },
         {
           "date": "2026-06-16",
           "km": 7.05
